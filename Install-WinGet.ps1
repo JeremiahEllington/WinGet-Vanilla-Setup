@@ -60,8 +60,8 @@ function Get-WinGetPath {
     "$env:ProgramFiles\WindowsApps\Microsoft.DesktopAppInstaller_*\winget.exe"
   )
   foreach ($p in $paths) { if (Test-Path $p) { return $p } }
-  $global = (Get-Command winget -ErrorAction SilentlyContinue)?.Source
-  if ($global) { return $global }
+  $cmd = Get-Command winget -ErrorAction SilentlyContinue
+  if ($cmd -and $cmd.Source) { return $cmd.Source }
   return $null
 }
 
@@ -173,10 +173,15 @@ function Install-FromPackagesList {
   $wg = Get-WinGetPath
   if (-not $wg) { return }
   Write-Info "Installing packages from: $PackagesFile"
-  Get-Content $PackagesFile | Where-Object { $_ -and -not $_.StartsWith('#') } | ForEach-Object {
-    Write-Info "winget install $_"
-    & $wg install --id $_ --silent --accept-source-agreements --accept-package-agreements || Write-Warn "Failed to install $_"
-  }
+  Get-Content $PackagesFile |
+    Where-Object { $_ -and -not $_.StartsWith('#') } |
+    ForEach-Object {
+      $pkg = $_.Trim()
+      if (-not $pkg) { return }
+      Write-Info "winget install $pkg"
+      & $wg install --id $pkg --silent --accept-source-agreements --accept-package-agreements
+      if ($LASTEXITCODE -ne 0) { Write-Warn "Failed to install $pkg" }
+    }
 }
 
 # Main

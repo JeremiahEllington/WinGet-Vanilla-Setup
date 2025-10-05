@@ -33,7 +33,7 @@ Then run:
 
 ```powershell
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
-.\nInstall-WinGet.ps1 -UseOffline
+.\Install-WinGet.ps1 -UseOffline
 ```
 
 ## Installing apps with winget
