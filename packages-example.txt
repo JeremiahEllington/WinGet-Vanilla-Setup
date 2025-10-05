@@ -1,0 +1,7 @@
+# Add one winget package ID per line. Lines starting with # are comments.
+Microsoft.PowerToys
+Microsoft.VisualStudioCode
+Git.Git
+7zip.7zip
+Google.Chrome
+Spotify.Spotify
